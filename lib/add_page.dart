@@ -58,6 +58,7 @@ class _AddPageState extends State<AddPage> {
           child: Column(
             children: [
               TextFormField(
+                controller: contollers[0],
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   label: Text('title'),
@@ -68,7 +69,7 @@ class _AddPageState extends State<AddPage> {
               ),
               Expanded(
                 child: TextFormField(
-                  controller: contollers[0],
+                  controller: contollers[1],
                   maxLength: 500,
                   maxLines: 10,
                   decoration: const InputDecoration(
@@ -78,11 +79,11 @@ class _AddPageState extends State<AddPage> {
                 ),
               ),
               ElevatedButton(
-                onPressed: () {
+                onPressed: () async {
                   var title = contollers[0].text;
-                  var result = fileSave();
+                  var result = await fileSave();
                   if (result == true) {
-                    Navigator.pop(context, 'OK');
+                    Navigator.pop(context, 'ok');
                   } else {
                     print('저장실패');
                   }
