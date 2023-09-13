@@ -52,6 +52,29 @@ class _MainState extends State<Main> {
     }
   }
 
+  Future<void> deleteFile() async {
+    try {
+      var file = File(filePath);
+      var result = file.delete().then((value) {
+        print(value);
+        showList();
+      });
+      print(result.toString());
+    } catch (e) {
+      print('delete error');
+    }
+  }
+
+  Future<void> deleteContents(int index) async {
+    var file = File(filePath);
+    var fileContents = await file.readAsString();
+    var dataList = jsonDecode(fileContents) as List<dynamic>;
+    dataList.removeAt(index);
+
+    var jsonData = jsonEncode(dataList);
+    await file.writeAsString(jsonData).then((value) => showList());
+  }
+
   Future<void> showList() async {
     try {
       var file = File(filePath);
@@ -62,13 +85,21 @@ class _MainState extends State<Main> {
               if (snapshot.hasData) {
                 var d = snapshot.data;
                 var dataList = jsonDecode(d!) as List<dynamic>;
+
+                if (dataList.isEmpty) {
+                  return const Text("파일은 존재하지만 입력된 데이터가 없다");
+                }
                 return ListView.separated(
                   itemBuilder: (context, index) {
                     var data = dataList[index] as Map<String, dynamic>;
                     return ListTile(
                       title: Text(data['title']),
                       subtitle: Text(data['contents']),
-                      trailing: const Icon(Icons.delete),
+                      trailing: IconButton(
+                          onPressed: () {
+                            deleteContents(index);
+                          },
+                          icon: const Icon(Icons.delete)),
                     );
                   },
                   separatorBuilder: (context, index) => const Divider(),
@@ -80,6 +111,10 @@ class _MainState extends State<Main> {
             },
             future: file.readAsString(),
           );
+        });
+      } else {
+        setState(() {
+          myList = const Text('파일이 없습니다');
         });
       }
     } catch (e) {
@@ -93,11 +128,21 @@ class _MainState extends State<Main> {
       body: Padding(
         padding: const EdgeInsets.all(100),
         child: Column(children: [
-          ElevatedButton(
-            onPressed: () {
-              showList();
-            },
-            child: const Text('조회'),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              ElevatedButton(
+                onPressed: () {
+                  showList();
+                },
+                child: const Text('조회'),
+              ),
+              ElevatedButton(
+                  onPressed: () {
+                    deleteFile();
+                  },
+                  child: const Text('삭제'))
+            ],
           ),
           Expanded(child: myList),
         ]),
