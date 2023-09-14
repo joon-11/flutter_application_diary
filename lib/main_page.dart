@@ -122,6 +122,16 @@ class _MainState extends State<Main> {
     }
   }
 
+  Future<void> setFilePath(String? date) async {
+    setState(() {
+      if (date == null) {
+        filePath = '${DateTime.now().toString().split(' ')[0]}.json';
+      } else {
+        filePath = '$date.json';
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -137,6 +147,18 @@ class _MainState extends State<Main> {
                 },
                 child: const Text('조회'),
               ),
+              IconButton(
+                  onPressed: () async {
+                    var date = await showDatePicker(
+                        context: context,
+                        initialDate: DateTime.now(),
+                        firstDate: DateTime(2023, 1, 1),
+                        lastDate: DateTime(2023, 12, 30));
+                    if (date != null) {
+                      setFilePath(date.toString().split(' ')[0]);
+                    }
+                  },
+                  icon: const Icon(Icons.calendar_month)),
               ElevatedButton(
                   onPressed: () {
                     deleteFile();
