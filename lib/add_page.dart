@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 
+// ignore: must_be_immutable
 class AddPage extends StatefulWidget {
   String filePath;
   AddPage({super.key, required this.filePath});
@@ -12,7 +12,7 @@ class AddPage extends StatefulWidget {
 }
 
 class _AddPageState extends State<AddPage> {
-  String filePath = ' ';
+  String filePath = '';
 
   List<TextEditingController> contollers = [
     TextEditingController(),
@@ -40,7 +40,6 @@ class _AddPageState extends State<AddPage> {
       await file.writeAsString(jsonData);
       return true;
     } catch (e) {
-      print(e);
       return false;
     }
   }
